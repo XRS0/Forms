@@ -4,9 +4,9 @@ package jwt;
 
 option go_package = "/gen";
 
-service AuthService {
+service JWTService {
   rpc CreateJWTToken(CreateTokenRequest) returns (CreateTokenResponse);
-  rpc VerifyJWTToken(VerifyTokenRequest) returns (VerifyTokenResponse);
+  rpc VerifyJWTToken(ValidateTokenRequest) returns (ValidateTokenResponse);
 }
 
 message CreateTokenRequest {
@@ -18,10 +18,10 @@ message CreateTokenResponse {
     string token = 1;
 }
 
-message VerifyTokenRequest {
+message ValidateTokenRequest {
     string token = 1;
 }
 
-message VerifyTokenResponse {
+message ValidateTokenResponse {
     bool access = 1;
 }

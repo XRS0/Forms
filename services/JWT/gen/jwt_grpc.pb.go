@@ -18,122 +18,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// AuthServiceClient is the client API for AuthService service.
+// JWTServiceClient is the client API for JWTService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AuthServiceClient interface {
+type JWTServiceClient interface {
 	CreateJWTToken(ctx context.Context, in *CreateTokenRequest, opts ...grpc.CallOption) (*CreateTokenResponse, error)
-	VerifyJWTToken(ctx context.Context, in *VerifyTokenRequest, opts ...grpc.CallOption) (*VerifyTokenResponse, error)
+	VerifyJWTToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
 }
 
-type authServiceClient struct {
+type jWTServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
-	return &authServiceClient{cc}
+func NewJWTServiceClient(cc grpc.ClientConnInterface) JWTServiceClient {
+	return &jWTServiceClient{cc}
 }
 
-func (c *authServiceClient) CreateJWTToken(ctx context.Context, in *CreateTokenRequest, opts ...grpc.CallOption) (*CreateTokenResponse, error) {
+func (c *jWTServiceClient) CreateJWTToken(ctx context.Context, in *CreateTokenRequest, opts ...grpc.CallOption) (*CreateTokenResponse, error) {
 	out := new(CreateTokenResponse)
-	err := c.cc.Invoke(ctx, "/jwt.AuthService/CreateJWTToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/jwt.JWTService/CreateJWTToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authServiceClient) VerifyJWTToken(ctx context.Context, in *VerifyTokenRequest, opts ...grpc.CallOption) (*VerifyTokenResponse, error) {
-	out := new(VerifyTokenResponse)
-	err := c.cc.Invoke(ctx, "/jwt.AuthService/VerifyJWTToken", in, out, opts...)
+func (c *jWTServiceClient) VerifyJWTToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error) {
+	out := new(ValidateTokenResponse)
+	err := c.cc.Invoke(ctx, "/jwt.JWTService/VerifyJWTToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AuthServiceServer is the server API for AuthService service.
-// All implementations must embed UnimplementedAuthServiceServer
+// JWTServiceServer is the server API for JWTService service.
+// All implementations must embed UnimplementedJWTServiceServer
 // for forward compatibility
-type AuthServiceServer interface {
+type JWTServiceServer interface {
 	CreateJWTToken(context.Context, *CreateTokenRequest) (*CreateTokenResponse, error)
-	VerifyJWTToken(context.Context, *VerifyTokenRequest) (*VerifyTokenResponse, error)
-	mustEmbedUnimplementedAuthServiceServer()
+	VerifyJWTToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
+	mustEmbedUnimplementedJWTServiceServer()
 }
 
-// UnimplementedAuthServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedAuthServiceServer struct {
+// UnimplementedJWTServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedJWTServiceServer struct {
 }
 
-func (UnimplementedAuthServiceServer) CreateJWTToken(context.Context, *CreateTokenRequest) (*CreateTokenResponse, error) {
+func (UnimplementedJWTServiceServer) CreateJWTToken(context.Context, *CreateTokenRequest) (*CreateTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateJWTToken not implemented")
 }
-func (UnimplementedAuthServiceServer) VerifyJWTToken(context.Context, *VerifyTokenRequest) (*VerifyTokenResponse, error) {
+func (UnimplementedJWTServiceServer) VerifyJWTToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyJWTToken not implemented")
 }
-func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
+func (UnimplementedJWTServiceServer) mustEmbedUnimplementedJWTServiceServer() {}
 
-// UnsafeAuthServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AuthServiceServer will
+// UnsafeJWTServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to JWTServiceServer will
 // result in compilation errors.
-type UnsafeAuthServiceServer interface {
-	mustEmbedUnimplementedAuthServiceServer()
+type UnsafeJWTServiceServer interface {
+	mustEmbedUnimplementedJWTServiceServer()
 }
 
-func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
-	s.RegisterService(&AuthService_ServiceDesc, srv)
+func RegisterJWTServiceServer(s grpc.ServiceRegistrar, srv JWTServiceServer) {
+	s.RegisterService(&JWTService_ServiceDesc, srv)
 }
 
-func _AuthService_CreateJWTToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _JWTService_CreateJWTToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).CreateJWTToken(ctx, in)
+		return srv.(JWTServiceServer).CreateJWTToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/jwt.AuthService/CreateJWTToken",
+		FullMethod: "/jwt.JWTService/CreateJWTToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).CreateJWTToken(ctx, req.(*CreateTokenRequest))
+		return srv.(JWTServiceServer).CreateJWTToken(ctx, req.(*CreateTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_VerifyJWTToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyTokenRequest)
+func _JWTService_VerifyJWTToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).VerifyJWTToken(ctx, in)
+		return srv.(JWTServiceServer).VerifyJWTToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/jwt.AuthService/VerifyJWTToken",
+		FullMethod: "/jwt.JWTService/VerifyJWTToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).VerifyJWTToken(ctx, req.(*VerifyTokenRequest))
+		return srv.(JWTServiceServer).VerifyJWTToken(ctx, req.(*ValidateTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
+// JWTService_ServiceDesc is the grpc.ServiceDesc for JWTService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "jwt.AuthService",
-	HandlerType: (*AuthServiceServer)(nil),
+var JWTService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "jwt.JWTService",
+	HandlerType: (*JWTServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateJWTToken",
-			Handler:    _AuthService_CreateJWTToken_Handler,
+			Handler:    _JWTService_CreateJWTToken_Handler,
 		},
 		{
 			MethodName: "VerifyJWTToken",
-			Handler:    _AuthService_VerifyJWTToken_Handler,
+			Handler:    _JWTService_VerifyJWTToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
