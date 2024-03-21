@@ -5,21 +5,28 @@ import (
 	"fmt"
 	"log"
 
-	pb "github.com/XRS0/Forms/services/auth/gen"
-
+	pbJWT "github.com/XRS0/Forms/services/JWT/gen"
+	pbAuth "github.com/XRS0/Forms/services/auth/gen"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	connAuthService, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	connAuth, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	connJWT, err := grpc.Dial("localhost:50052", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 
-	c := pb.NewAuthServiceClient(connAuthService)
-	resp, err := c.Login(context.Background(), &pb.LoginRequest{Username: "John", Password: "жопажопа"})
-	if err != nil {
+	cAuth := pbAuth.NewAuthServiceClient(connAuth)
+	cJWT := pbJWT.NewJWTServiceClient(connJWT)
+	respAuth, errAuth := cAuth.Login(context.Background(), &pbAuth.LoginRequest{Username: "John", Password: "жопажопа"})
+	if errAuth != nil {
 		log.Fatalf("could not login	: %v", err)
 	}
-	fmt.Println("Message:", resp.Message)
+	respJWT, errJWT := cJWT.CreateJWTToken(context.Background(), &pbJWT.CreateTokenRequest{Username: "John", Password: "жопажопа"})
+	if errJWT != nil {
+		log.Fatalf("could not login	: %v", err)
+	}
+	fmt.Println("Message:", respAuth.Message)
+	fmt.Println("Token:", respJWT.Token)
 }
