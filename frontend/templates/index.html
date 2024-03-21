@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Страница аутентификации</title>
+<link rel="stylesheet" href="/styles/index.css">
+<body>
+    <div class="login-container">
+    <h2>Вход в систему</h2>
+    <form id="loginForm">
+        <div class="form-group">
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" placeholder="Введите ваше имя пользователя" required>
+        </div>
+        <div class="form-group">
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" placeholder="Введите ваш пароль" required>
+        </div>
+        <button type="submit" class="submit-btn">Войти</button>
+    </form>
+    <div class="form-footer">
+        <a href="#">Забыли пароль?</a>
+    </div>
+    </div>
+    <div id="response"></div>
+    <script src="/scripts/index.js"></script>   
+</body>
+</html>
