@@ -15,7 +15,7 @@ message LoginRequest {
 }
 
 message LoginResponse {
-    bool message = 1;
+    string message = 1;
 }
 
 message RegisterRequest {

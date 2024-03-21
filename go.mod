@@ -1,4 +1,4 @@
-module github.com/XRS0/authService
+module github.com/XRS0/Forms
 
 go 1.22.1
 
