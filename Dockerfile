@@ -24,14 +24,11 @@ COPY frontend/styles ./frontend/styles
 COPY frontend/scripts ./frontend/scripts
 COPY restapi/router ./restapi/router
 COPY services/auth/gen ./services/auth/gen
+COPY services/JWT/gen ./services/JWT/gen
 COPY restapi/cmd .
 RUN go mod download
 RUN go mod tidy
 RUN go build -o rest-service .
-
-COPY restapi/cmd .
-RUN go mod download
-RUN go mod tidy
 
 FROM alpine
 COPY --from=auth-builder /build/auth-service /auth-service
