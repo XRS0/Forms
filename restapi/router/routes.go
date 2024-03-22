@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -40,6 +41,7 @@ func RouteAuth(r *gin.Engine) {
 		success, err := ConnectToAuthService(creds.Username, creds.Password)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		// success := creds.Username == "sum" && creds.Password == "jwt"
@@ -57,7 +59,7 @@ func ConnectToAuthService(username, password string) (*pbAuth.LoginResponse, err
 	cAuth := pbAuth.NewAuthServiceClient(connAuth)
 	respAuth, errAuth := cAuth.Login(context.Background(), &pbAuth.LoginRequest{Username: username, Password: password})
 	if errAuth != nil {
-		log.Fatalf("could not login	: %v", err)
+		fmt.Printf("could not login: %v", err)
 		return nil, errAuth
 	}
 	return respAuth, nil

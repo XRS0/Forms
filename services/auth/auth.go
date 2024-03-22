@@ -28,7 +28,7 @@ func main() {
 
 func (s *authServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.LoginResponse, error) {
 	fmt.Println("Received: чел с ником", in.Username, "и с паролем", in.Password)
-	if in.Username == "John" && in.Password == "жопажопа" {
+	if in.Username == "sum" && in.Password == "jwt" {
 		return &pb.LoginResponse{Message: "туалет открыт"}, nil
 	}
 	return nil, grpc.Errorf(7, "вы не обладаете полномочиями какать здесь")

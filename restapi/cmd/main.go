@@ -10,9 +10,13 @@ import (
 func main() {
 	r := gin.Default()
 	// Сервирование статических файлов для фронтенда
-	r.Static("/styles", "../../frontend/styles")
-	r.Static("/scripts", "../../frontend/scripts")
-	r.LoadHTMLGlob("../../frontend/templates/*.html")
+	r.Static("/styles", "/frontend/styles/")
+	r.Static("/scripts", "/frontend/scripts/")
+	r.LoadHTMLGlob("/frontend/templates/*.html")
+
+	// r.Static("/styles", "../../frontend/styles/")
+	// r.Static("/scripts", "../../frontend/scripts/")
+	// r.LoadHTMLGlob("../../frontend/templates/*.html")
 
 	// Корневой маршрут, который загружает главную HTML страницу
 	r.GET("/", func(c *gin.Context) {
