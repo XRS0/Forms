@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  auth-service:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: /auth-service
+
+  jwt-service:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: /jwt-service
