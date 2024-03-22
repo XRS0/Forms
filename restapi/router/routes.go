@@ -36,18 +36,29 @@ func RouteAuth(r *gin.Engine) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		connAuth, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+
+		success, err := ConnectToAuthService(creds.Username, creds.Password)
 		if err != nil {
-			log.Fatalf("did not connect: %v", err)
-		}
-		cAuth := pbAuth.NewAuthServiceClient(connAuth)
-		respAuth, errAuth := cAuth.Login(context.Background(), &pbAuth.LoginRequest{Username: "John", Password: "жопажопа"})
-		if errAuth != nil {
-			log.Fatalf("could not login	: %v", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		}
 
 		// success := creds.Username == "sum" && creds.Password == "jwt"
 
-		c.JSON(http.StatusOK, gin.H{"success": respAuth})
+		c.JSON(http.StatusOK, gin.H{"success": success})
 	})
+}
+
+func ConnectToAuthService(username, password string) (*pbAuth.LoginResponse, error) {
+	connAuth, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+		return nil, err
+	}
+	cAuth := pbAuth.NewAuthServiceClient(connAuth)
+	respAuth, errAuth := cAuth.Login(context.Background(), &pbAuth.LoginRequest{Username: username, Password: password})
+	if errAuth != nil {
+		log.Fatalf("could not login	: %v", err)
+		return nil, errAuth
+	}
+	return respAuth, nil
 }
