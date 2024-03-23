@@ -20,8 +20,11 @@ func main() {
 
 	// Корневой маршрут, который загружает главную HTML страницу
 	r.GET("/", func(c *gin.Context) {
+		// Проверка токена
+		r.Use(TokenAuthMiddleware())
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 	routes.RouteAuth(r)
+
 	r.Run(":8080")
 }

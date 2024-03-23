@@ -32,7 +32,7 @@ func RouteAuth(r *gin.Engine) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		tokenString, err := CreateToken(creds.Username)
+		tokenString, err := CreateToken(creds.Username, ConnectToJWTService())
 		if err != nil {
 			return
 		}
@@ -48,42 +48,46 @@ func RouteAuth(r *gin.Engine) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		success, err := AuthUser(creds.Username, creds.Password)
+		success, err := AuthUser(ConnectToAuthService(), creds.Username, creds.Password)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-
 		// success := creds.Username == "sum" && creds.Password == "jwt"
 
 		c.JSON(http.StatusOK, gin.H{"success": success})
 	})
 }
 
-func AuthUser(username, password string) (*pbAuth.LoginResponse, error) {
+func ConnectToAuthService() pbAuth.AuthServiceClient {
 	connAuth, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
-		return nil, err
+		return nil
 	}
 	cAuth := pbAuth.NewAuthServiceClient(connAuth)
+	return cAuth
+}
+
+func ConnectToJWTService() pbJWT.JWTServiceClient {
+	connJWT, err := grpc.Dial("localhost:50052", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	cJWT := pbJWT.NewJWTServiceClient(connJWT)
+	return cJWT
+}
+
+func AuthUser(cAuth pbAuth.AuthServiceClient, username, password string) (*pbAuth.LoginResponse, error) {
 	respAuth, errAuth := cAuth.Login(context.Background(), &pbAuth.LoginRequest{Username: username, Password: password})
 	if errAuth != nil {
-		fmt.Printf("could not login: %v", err)
+		fmt.Printf("could not login (authModule): %v\n", errAuth)
 		return nil, errAuth
 	}
 	return respAuth, nil
 }
 
-func CreateToken(username string) (*pbJWT.CreateTokenResponse, error) {
-	connJWT, err := grpc.Dial("localhost:50052", grpc.WithInsecure())
-
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-
-	cJWT := pbJWT.NewJWTServiceClient(connJWT)
-
+func CreateToken(username string, cJWT pbJWT.JWTServiceClient) (*pbJWT.CreateTokenResponse, error) {
 	respJWT, errJWT := cJWT.CreateJWTToken(context.Background(), &pbJWT.CreateTokenRequest{Username: "John"})
 	if errJWT != nil {
 		return nil, grpc.Errorf(7, "че то пошло не по плану")

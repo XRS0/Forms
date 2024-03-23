@@ -14,9 +14,9 @@ function handleLogin(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-        document.getElementById('response').textContent = 'Успешный вход!';
+            document.getElementById('response').textContent = 'Успешный вход!';
         } else {
-        document.getElementById('response').textContent = 'Неверные данные.';
+            document.getElementById('response').textContent = 'Неверные данные.';
         }
     })
     .catch((error) => {
