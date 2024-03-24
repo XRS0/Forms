@@ -3,7 +3,6 @@ package router
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	pbJWT "github.com/XRS0/Forms/services/JWT/gen"
@@ -34,6 +33,7 @@ func RouteAuth(r *gin.Engine) {
 		}
 		tokenString, err := CreateToken(creds.Username, ConnectToJWTService())
 		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при создании токена"})
 			return
 		}
 
@@ -62,7 +62,7 @@ func RouteAuth(r *gin.Engine) {
 func ConnectToAuthService() pbAuth.AuthServiceClient {
 	connAuth, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		fmt.Printf("did not connect: %v", err)
 		return nil
 	}
 	cAuth := pbAuth.NewAuthServiceClient(connAuth)
@@ -72,7 +72,8 @@ func ConnectToAuthService() pbAuth.AuthServiceClient {
 func ConnectToJWTService() pbJWT.JWTServiceClient {
 	connJWT, err := grpc.Dial("localhost:50052", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		fmt.Printf("did not connect: %v", err)
+		return nil
 	}
 	cJWT := pbJWT.NewJWTServiceClient(connJWT)
 	return cJWT
@@ -88,11 +89,19 @@ func AuthUser(cAuth pbAuth.AuthServiceClient, username, password string) (*pbAut
 }
 
 func CreateToken(username string, cJWT pbJWT.JWTServiceClient) (*pbJWT.CreateTokenResponse, error) {
-	respJWT, errJWT := cJWT.CreateJWTToken(context.Background(), &pbJWT.CreateTokenRequest{Username: "John"})
-	if errJWT != nil {
+	resp, err := cJWT.CreateJWTToken(context.Background(), &pbJWT.CreateTokenRequest{Username: username})
+	if err != nil {
 		return nil, grpc.Errorf(7, "че то пошло не по плану")
 	}
-	tokenString := respJWT.Token
-	fmt.Println("Token:", respJWT.Token)
+	tokenString := resp.Token
+	fmt.Println("Token:", resp.Token)
 	return &pbJWT.CreateTokenResponse{Token: tokenString}, nil
+}
+
+func ValidateToken(token string, cJWT pbJWT.JWTServiceClient) (*pbJWT.ValidateTokenResponse, error) {
+	resp, err := cJWT.VerifyJWTToken(context.Background(), &pbJWT.ValidateTokenRequest{Token: token})
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
