@@ -16,10 +16,10 @@ type JWTserver struct {
 	pb.UnimplementedJWTServiceServer
 }
 
-var secretKey = []byte("shopapopa")
+var secretKey = []byte("XRSO")
 
 func main() {
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", ":50052")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -30,13 +30,12 @@ func main() {
 	}
 }
 
-func (s *JWTserver) Login(ctx context.Context, in *pb.CreateTokenRequest) (*pb.CreateTokenResponse, error) {
+func (s *JWTserver) CreateToken(ctx context.Context, in *pb.CreateTokenRequest) (*pb.CreateTokenResponse, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	// Устанавливаем набор утверждений (claims)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = in.Username
-	claims["password"] = in.Password // Обычно пароль не включают в токен
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 	// Подписываем токен нашим секретным ключом
@@ -59,7 +58,7 @@ func (s *JWTserver) ValidateToken(ctx context.Context, in *pb.ValidateTokenReque
 	})
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println(claims["username"], claims["password"])
+		fmt.Println(claims["username"])
 		return &pb.ValidateTokenResponse{Access: true}, nil
 	} else {
 		return nil, err
