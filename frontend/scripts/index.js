@@ -22,10 +22,11 @@ function handleLogin(event) {
     .then(data => {
         if (data.success) {
             // Учетные данные верны, теперь запрашиваем JWT токен
-            return getJwtToken(username, password);
+            // return getJwtToken(username, password);
+            document.getElementById('response').textContent = 'Норм чел проходи.';
         } else {
             // Если учетные данные неверны, сообщаем об этом
-            document.getElementById('response').textContent = 'Неверные данные.';
+            document.getElementById('response').textContent = 'Вы не обладаете полномочиями какать здесь.';
             throw new Error('Неверные учетные данные');
         }
     })
